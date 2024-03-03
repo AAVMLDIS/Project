@@ -1,15 +1,7 @@
-annotated-types==0.6.0
 dadata
 fastapi
 fastparquet
-fsspec
-geographiclib
-geopy
-joblib
-packaging
 pandas
 pyarrow
 pydantic
-scikit-learn
-scipy
 uvicorn
