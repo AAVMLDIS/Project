@@ -1,7 +1,4 @@
-dadata
 fastapi
 fastparquet
-pandas
-pyarrow
 pydantic
 uvicorn
