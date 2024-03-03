@@ -2,3 +2,5 @@ fastapi
 fastparquet
 pydantic
 uvicorn
+dadata
+geopy
