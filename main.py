@@ -1,13 +1,13 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import FileResponse
 from dadata import Dadata
-import numpy as np
-import geopy
-import geopy.distance
-import pandas as pd
-from io import BytesIO
+# import numpy as np
+# import geopy
+# import geopy.distance
+# import pandas as pd
+# from io import BytesIO
 import xgboost
-import pickle
+# import pickle
 
 app = FastAPI(title='Популярная геолокация')
 
