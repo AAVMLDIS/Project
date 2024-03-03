@@ -62,202 +62,201 @@ def predict_class_by_address(address: str):
     :param adress:
     :return:
     '''
-    return address
      
 
-    # # подаем токен, секретный код и адрес, для которого хотим получить score в dadata
-    # dadata = Dadata(token, secret)
-    # result = dadata.clean('address', address)
+    # подаем токен, секретный код и адрес, для которого хотим получить score в dadata
+    dadata = Dadata(token, secret)
+    result = dadata.clean('address', address)
 
-    # # дробим на координаты
-    # latitude = float(result['geo_lat'])
-    # longitude = float(result['geo_lon'])
+    # дробим на координаты
+    latitude = float(result['geo_lat'])
+    longitude = float(result['geo_lon'])
      
      
-    # # Длина одного гексагона в метрах
-    # cell_side = 300
-    # mapped_objects_dfs = []
+    # Длина одного гексагона в метрах
+    cell_side = 300
+    mapped_objects_dfs = []
 
-    # for curr_city in city_params_dict:
+    for curr_city in city_params_dict:
 
-    #     # левый верхний угол (северо-западный)
-    #     north, west, N = city_params_dict[curr_city]
+        # левый верхний угол (северо-западный)
+        north, west, N = city_params_dict[curr_city]
 
-    #     # начало сетки
-    #     start = geopy.Point(north, west)
+        # начало сетки
+        start = geopy.Point(north, west)
 
-    #     # откладываем сетку на восток и юг
-    #     distance_longitude = geopy.distance.distance(kilometers=(N * cell_side / 1_000))
-    #     distance_latitude = geopy.distance.distance(kilometers=(N * cell_side / 1_000))
+        # откладываем сетку на восток и юг
+        distance_longitude = geopy.distance.distance(kilometers=(N * cell_side / 1_000))
+        distance_latitude = geopy.distance.distance(kilometers=(N * cell_side / 1_000))
 
-    #     # #считаем расстояние и получаем координаты востока и юга
-    #     destination_east = distance_longitude.destination(point=start, bearing=90)
-    #     destination_south = distance_latitude.destination(point=start, bearing=180)
+        # #считаем расстояние и получаем координаты востока и юга
+        destination_east = distance_longitude.destination(point=start, bearing=90)
+        destination_south = distance_latitude.destination(point=start, bearing=180)
 
-    #     east = destination_east.longitude
-    #     south = destination_south.latitude
+        east = destination_east.longitude
+        south = destination_south.latitude
 
-    #     if south <= latitude <= north and west <= longitude <= east:
-    #         print(f'Вы попали в город: {curr_city}')
+        if south <= latitude <= north and west <= longitude <= east:
+            print(f'Вы попали в город: {curr_city}')
 
-    #         sn = (south - north) / N
-    #         ew = (east - west) / N
+            sn = (south - north) / N
+            ew = (east - west) / N
 
-    #         upper_left = np.mgrid[north:south:sn, west:east:ew]
-    #         upper_right = np.mgrid[north:south:sn, west + ew:east + ew:ew]
-    #         lower_left = np.mgrid[north + sn:south + sn:sn, west:east:ew]
-    #         lower_right = np.mgrid[north + sn:south + sn:sn, west + ew:east + ew:ew]
+            upper_left = np.mgrid[north:south:sn, west:east:ew]
+            upper_right = np.mgrid[north:south:sn, west + ew:east + ew:ew]
+            lower_left = np.mgrid[north + sn:south + sn:sn, west:east:ew]
+            lower_right = np.mgrid[north + sn:south + sn:sn, west + ew:east + ew:ew]
 
-    #         grid = pd.DataFrame()
+            grid = pd.DataFrame()
 
-    #         grid["upper_left_lat"] = upper_left[0].reshape(N * N)
-    #         grid["upper_left_lon"] = upper_left[1].reshape(N * N)
+            grid["upper_left_lat"] = upper_left[0].reshape(N * N)
+            grid["upper_left_lon"] = upper_left[1].reshape(N * N)
 
-    #         grid["upper_right_lat"] = upper_right[0].reshape(N * N)
-    #         grid["upper_right_lon"] = upper_right[1].reshape(N * N)
+            grid["upper_right_lat"] = upper_right[0].reshape(N * N)
+            grid["upper_right_lon"] = upper_right[1].reshape(N * N)
 
-    #         grid["lower_left_lat"] = lower_left[0].reshape(N * N)
-    #         grid["lower_left_lon"] = lower_left[1].reshape(N * N)
+            grid["lower_left_lat"] = lower_left[0].reshape(N * N)
+            grid["lower_left_lon"] = lower_left[1].reshape(N * N)
 
-    #         grid["lower_right_lat"] = lower_right[0].reshape(N * N)
-    #         grid["lower_right_lon"] = lower_right[1].reshape(N * N)
+            grid["lower_right_lat"] = lower_right[0].reshape(N * N)
+            grid["lower_right_lon"] = lower_right[1].reshape(N * N)
 
-    #         grid["X_ID"] = np.mgrid[0:N:1, 0:N:1][0].reshape(N * N)
-    #         grid["Y_ID"] = np.mgrid[0:N:1, 0:N:1][1].reshape(N * N)
+            grid["X_ID"] = np.mgrid[0:N:1, 0:N:1][0].reshape(N * N)
+            grid["Y_ID"] = np.mgrid[0:N:1, 0:N:1][1].reshape(N * N)
 
-    #         grid["cell_center_lon"] = (grid.upper_right_lon - grid.upper_left_lon) / 2 + grid.upper_left_lon
-    #         grid["cell_center_lat"] = (grid.upper_right_lat - grid.lower_right_lat) / 2 + grid.lower_right_lat
+            grid["cell_center_lon"] = (grid.upper_right_lon - grid.upper_left_lon) / 2 + grid.upper_left_lon
+            grid["cell_center_lat"] = (grid.upper_right_lat - grid.lower_right_lat) / 2 + grid.lower_right_lat
 
-    #         cell_center = np.zeros(shape=(2, N, N))
+            cell_center = np.zeros(shape=(2, N, N))
 
-    #         cell_center[0] = np.array(grid.cell_center_lat).reshape(N, N)
-    #         cell_center[1] = np.array(grid.cell_center_lon).reshape(N, N)
+            cell_center[0] = np.array(grid.cell_center_lat).reshape(N, N)
+            cell_center[1] = np.array(grid.cell_center_lon).reshape(N, N)
 
-    #         hexagon = str(findloc(lat=latitude,
-    #                               lon=longitude,
-    #                               poly=cell_center))
+            hexagon = str(findloc(lat=latitude,
+                                  lon=longitude,
+                                  poly=cell_center))
             
                
-    #         hex_features_vector = df[(df['city'] == curr_city) & (df['cell'] == hexagon)] \
-    #             .drop(['city', 'cell'], axis=1)
+            hex_features_vector = df[(df['city'] == curr_city) & (df['cell'] == hexagon)] \
+                .drop(['city', 'cell'], axis=1)
 
-    #         with open('model_xgb.pkl', 'rb') as file:
-    #              model = pickle.load(file)   
-    #              result = model.predict(hex_features_vector)
-    #         return int(result[0])
+            with open('model_xgb.pkl', 'rb') as file:
+                 model = pickle.load(file)   
+                 result = model.predict(hex_features_vector)
+            return int(result[0])
                 
-    #     else:
-    #         continue
+        else:
+            continue
 
-    # return 'Вы промахнулись мимо сетки городов, попробуйте снова'
+    return 'Вы промахнулись мимо сетки городов, попробуйте снова'
 
 
      
-# @app.post('/predict_class_by_addresses')
-# def predict_class_by_addresses(file: UploadFile=File()) -> FileResponse:
+@app.post('/predict_class_by_addresses')
+def predict_class_by_addresses(file: UploadFile=File()) -> FileResponse:
 
-#     '''
-#     Функция на вход принимает csv файл,
-#     где представлен перечень адресов.
-#     На выходе функция выдает csv файл,
-#     где для каждого адреса проставлена
-#     метка класса
-#     '''
+    '''
+    Функция на вход принимает csv файл,
+    где представлен перечень адресов.
+    На выходе функция выдает csv файл,
+    где для каждого адреса проставлена
+    метка класса
+    '''
 
-#     content = file.file.read()
-#     test = BytesIO(content)
-#     test = pd.read_csv(test).to_numpy()
-#     arr = []
+    content = file.file.read()
+    test = BytesIO(content)
+    test = pd.read_csv(test).to_numpy()
+    arr = []
 
-#     arr_result = []
+    arr_result = []
 
-#     for num in test:
-#         arr.append(num[0])
+    for num in test:
+        arr.append(num[0])
          
-#     for adress in arr:
+    for adress in arr:
 
-#         # подаем токен, секретный код и адрес, для которого хотим получить score в dadata
-#         dadata = Dadata(token, secret)
-#         result = dadata.clean('address', adress)
+        # подаем токен, секретный код и адрес, для которого хотим получить score в dadata
+        dadata = Dadata(token, secret)
+        result = dadata.clean('address', adress)
 
-#         # дробим на координаты
-#         latitude = float(result['geo_lat'])
-#         longitude = float(result['geo_lon'])
+        # дробим на координаты
+        latitude = float(result['geo_lat'])
+        longitude = float(result['geo_lon'])
 
-#         # Длина одного гексагона в метрах
-#         cell_side = 300
+        # Длина одного гексагона в метрах
+        cell_side = 300
 
-#         for curr_city in city_params_dict:
+        for curr_city in city_params_dict:
 
-#             # левый верхний угол (северо-западный)
-#             north, west, N = city_params_dict[curr_city]
+            # левый верхний угол (северо-западный)
+            north, west, N = city_params_dict[curr_city]
 
-#             # начало сетки
-#             start = geopy.Point(north, west)
+            # начало сетки
+            start = geopy.Point(north, west)
 
-#             # откладываем сетку на восток и юг
-#             distance_longitude = geopy.distance.distance(kilometers=(N * cell_side / 1_000))
-#             distance_latitude = geopy.distance.distance(kilometers=(N * cell_side / 1_000))
+            # откладываем сетку на восток и юг
+            distance_longitude = geopy.distance.distance(kilometers=(N * cell_side / 1_000))
+            distance_latitude = geopy.distance.distance(kilometers=(N * cell_side / 1_000))
 
-#             # #считаем расстояние и получаем координаты востока и юга
-#             destination_east = distance_longitude.destination(point=start, bearing=90)
-#             destination_south = distance_latitude.destination(point=start, bearing=180)
+            # #считаем расстояние и получаем координаты востока и юга
+            destination_east = distance_longitude.destination(point=start, bearing=90)
+            destination_south = distance_latitude.destination(point=start, bearing=180)
 
-#             east = destination_east.longitude
-#             south = destination_south.latitude
+            east = destination_east.longitude
+            south = destination_south.latitude
 
-#             if south <= latitude <= north and west <= longitude <= east:
+            if south <= latitude <= north and west <= longitude <= east:
 
-#                 sn = (south - north) / N
-#                 ew = (east - west) / N
+                sn = (south - north) / N
+                ew = (east - west) / N
 
-#                 upper_left = np.mgrid[north:south:sn, west:east:ew]
-#                 upper_right = np.mgrid[north:south:sn, west + ew:east + ew:ew]
-#                 lower_left = np.mgrid[north + sn:south + sn:sn, west:east:ew]
-#                 lower_right = np.mgrid[north + sn:south + sn:sn, west + ew:east + ew:ew]
+                upper_left = np.mgrid[north:south:sn, west:east:ew]
+                upper_right = np.mgrid[north:south:sn, west + ew:east + ew:ew]
+                lower_left = np.mgrid[north + sn:south + sn:sn, west:east:ew]
+                lower_right = np.mgrid[north + sn:south + sn:sn, west + ew:east + ew:ew]
 
-#                 grid = pd.DataFrame()
+                grid = pd.DataFrame()
 
-#                 grid["upper_left_lat"] = upper_left[0].reshape(N * N)
-#                 grid["upper_left_lon"] = upper_left[1].reshape(N * N)
+                grid["upper_left_lat"] = upper_left[0].reshape(N * N)
+                grid["upper_left_lon"] = upper_left[1].reshape(N * N)
 
-#                 grid["upper_right_lat"] = upper_right[0].reshape(N * N)
-#                 grid["upper_right_lon"] = upper_right[1].reshape(N * N)
+                grid["upper_right_lat"] = upper_right[0].reshape(N * N)
+                grid["upper_right_lon"] = upper_right[1].reshape(N * N)
 
-#                 grid["lower_left_lat"] = lower_left[0].reshape(N * N)
-#                 grid["lower_left_lon"] = lower_left[1].reshape(N * N)
+                grid["lower_left_lat"] = lower_left[0].reshape(N * N)
+                grid["lower_left_lon"] = lower_left[1].reshape(N * N)
 
-#                 grid["lower_right_lat"] = lower_right[0].reshape(N * N)
-#                 grid["lower_right_lon"] = lower_right[1].reshape(N * N)
+                grid["lower_right_lat"] = lower_right[0].reshape(N * N)
+                grid["lower_right_lon"] = lower_right[1].reshape(N * N)
 
-#                 grid["X_ID"] = np.mgrid[0:N:1, 0:N:1][0].reshape(N * N)
-#                 grid["Y_ID"] = np.mgrid[0:N:1, 0:N:1][1].reshape(N * N)
+                grid["X_ID"] = np.mgrid[0:N:1, 0:N:1][0].reshape(N * N)
+                grid["Y_ID"] = np.mgrid[0:N:1, 0:N:1][1].reshape(N * N)
 
-#                 grid["cell_center_lon"] = (grid.upper_right_lon - grid.upper_left_lon) / 2 + grid.upper_left_lon
-#                 grid["cell_center_lat"] = (grid.upper_right_lat - grid.lower_right_lat) / 2 + grid.lower_right_lat
+                grid["cell_center_lon"] = (grid.upper_right_lon - grid.upper_left_lon) / 2 + grid.upper_left_lon
+                grid["cell_center_lat"] = (grid.upper_right_lat - grid.lower_right_lat) / 2 + grid.lower_right_lat
 
-#                 cell_center = np.zeros(shape=(2, N, N))
+                cell_center = np.zeros(shape=(2, N, N))
 
-#                 cell_center[0] = np.array(grid.cell_center_lat).reshape(N, N)
-#                 cell_center[1] = np.array(grid.cell_center_lon).reshape(N, N)
+                cell_center[0] = np.array(grid.cell_center_lat).reshape(N, N)
+                cell_center[1] = np.array(grid.cell_center_lon).reshape(N, N)
 
-#                 hexagon = str(findloc(lat=latitude,
-#                                       lon=longitude,
-#                                       poly=cell_center))
+                hexagon = str(findloc(lat=latitude,
+                                      lon=longitude,
+                                      poly=cell_center))
 
-#                 hex_features_vector = df[(df['city'] == curr_city) & (df['cell'] == hexagon)] \
-#                     .drop(['city', 'cell'], axis=1)
+                hex_features_vector = df[(df['city'] == curr_city) & (df['cell'] == hexagon)] \
+                    .drop(['city', 'cell'], axis=1)
 
-#                 with open('model_xgb.pkl', 'rb') as file:
-#                     model = pickle.load(file)
-#                     result = model.predict(hex_features_vector)
-#                     arr_result.append((adress, int(result[0])))
+                with open('model_xgb.pkl', 'rb') as file:
+                    model = pickle.load(file)
+                    result = model.predict(hex_features_vector)
+                    arr_result.append((adress, int(result[0])))
 
-#             else:
-#                 continue
+            else:
+                continue
 
-#     df_res = pd.DataFrame(arr_result, columns=['Адрес', 'Метка класса'])
-#     df_res.to_csv('result.csv', index=False)
-#     response = FileResponse(path='result.csv', media_type='text/csv')
+    df_res = pd.DataFrame(arr_result, columns=['Адрес', 'Метка класса'])
+    df_res.to_csv('result.csv', index=False)
+    response = FileResponse(path='result.csv', media_type='text/csv')
 
-#     return response
+    return response
