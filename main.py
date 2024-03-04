@@ -18,7 +18,7 @@ token = "6716d54a0b7cb797cc251e653359c13eade055b7"
 secret = "3bb9d71eb3046733c5a74d3a3437efc960fd5040"
 
 # Данные
-df = pd.read_parquet('df_1-2_new_-2.parquet')
+df = pd.read_parquet('df_1-2_new_-2 (2).parquet')
 
 city_params_dict = {
      'Москва':(56.031959, 36.797755, 343),
